@@ -1,0 +1,47 @@
+"A datetime string with format 'Y-m-d H:i:s', e.g. '2018-05-23 13:43:32'."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"User object"
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Campaign {
+    id: ID!
+    title: String!
+    status: CampaignStatus!
+    "Returns the metadata as a JSON string"
+    metadata: String @rename(attribute: "metadata_string")
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+enum CampaignStatus {
+    DRAFT
+    ACTIVE
+    ARCHIVED
+}
+
+type Query {
+    users: [User!]! @all @guard
+    user(id: ID @eq): User @find @guard
+    
+    campaigns(status: CampaignStatus @eq): [Campaign!]! @paginate(defaultCount: 10) @guard
+    campaign(id: ID @eq): Campaign @find @guard
+}
+
+input MaintainCampaignInput {
+    title: String! @rules(apply: ["required", "min:3"])
+    status: CampaignStatus
+    "Pass a valid JSON string"
+    metadata_json: String @rules(apply: ["json"])
+}
+
+type Mutation {
+    maintainCampaign(id: ID, input: MaintainCampaignInput!): Campaign! 
+        @field(resolver: "App\\GraphQL\\Mutations\\MaintainCampaign")
+}

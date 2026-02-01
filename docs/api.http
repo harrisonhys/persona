@@ -1,0 +1,56 @@
+@baseUrl = http://localhost:8000/graphql
+@authToken = 1|EQ30XSLLcOEmXgjNkpBQBZH7VOcGSjWpsHAsvJ4Iff2100af
+
+### 1. Introspection (Check if API is reachable)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+    "query": "{ __schema { types { name } } }"
+}
+
+### 2. Get Current User (Test Auth)
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "query": "{ user(id: 1) { id name email } }"
+}
+
+### 3. Create Campaign (Maintain Mutation)
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "query": "mutation { maintainCampaign(input: { title: \"Black Friday Sale\", status: DRAFT, metadata_json: \"{\\\"discount\\\": \\\"50%\\\", \\\"priority\\\": \\\"high\\\"}\" }) { id title status metadata } }"
+}
+
+### 4. Create Another Campaign
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "query": "mutation { maintainCampaign(input: { title: \"Ramadhan Sale\", status: ACTIVE, metadata_json: \"{\\\"segment\\\": \\\"all\\\"}\" }) { id title status } }"
+}
+
+### 5. Update Campaign (Pass ID)
+# Replace '1' with an actual ID from step 3
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "query": "mutation { maintainCampaign(id: 1, input: { title: \"Black Friday UPDATED\", status: ACTIVE, metadata_json: \"{\\\"discount\\\": \\\"60%\\\"}\" }) { id title status metadata } }"
+}
+
+### 6. List All Campaigns
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "query": "{ campaigns { id title status metadata created_at } }"
+}
