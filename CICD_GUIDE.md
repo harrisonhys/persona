@@ -53,11 +53,18 @@ Anda bisa memantau hasilnya di tab **Actions** di halaman repository GitHub Anda
 
 ### Jika Ingin Deployment Otomatis (CD) ke Server VPS
 
-Jika Anda punya server VPS (Ubuntu/Debian) dan ingin code otomatis terupdate di server saat push:
+Saya telah membuat file `.github/workflows/deploy.yml`. Untuk mengaktifkannya:
 
 1.  Pastikan Anda bisa SSH ke server Anda.
-2.  Tambahkan `DEPLOY.yml` (akan saya buatkan jika Anda mau).
-3.  Anda perlu memasukkan **Secrets** di GitHub (Host, Username, SSH Key).
+2.  Clone repo ini di server Anda (misal di `/var/www/graphql-srv`).
+3.  Buka **Settings > Secrets and variables > Actions** di GitHub Repository Anda.
+4.  Tambahkan **New repository secret**:
+    *   `VPS_HOST`: IP Address server Anda (contoh: `103.x.x.x`).
+    *   `VPS_USERNAME`: Username SSH (contoh: `root` atau `deployer`).
+    *   `VPS_SSH_KEY`: Private Key SSH (Isi dari file `id_rsa` atau `.pem`).
+    *   `VPS_PORT`: (Opsional) Port SSH jika bukan 22.
+
+Setelah ini diset, setiap kali Anda push ke `main`, GitHub akan otomatis mengupdate code di server!
 
 ## 4. Troubleshooting
 Jika `git services` error atau `.env` ikut terupload:

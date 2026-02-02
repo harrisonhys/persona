@@ -1,0 +1,53 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || '22' }}
+          script: |
+            # Stop execution on error
+            set -e
+            
+            # 1. Masuk ke folder project
+            cd /home/u848041896/domains/bro.my.id/public_html/graphql-srv
+            
+            # 2. Pull code terbaru
+            # Menggunakan git fetch + reset hard untuk memastikan server identik dengan repo
+            git fetch origin main
+            git reset --hard origin/main
+            
+            # 3. Install dependencies (Production optimized)
+            /opt/alt/php82/usr/bin/php /usr/local/bin/composer2 install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+            
+            # 4. Update Database
+            /opt/alt/php82/usr/bin/php artisan migrate --force
+            
+            # 5. Optimize Caches
+            /opt/alt/php82/usr/bin/php artisan optimize:clear
+            /opt/alt/php82/usr/bin/php artisan config:cache
+            /opt/alt/php82/usr/bin/php artisan route:cache
+            /opt/alt/php82/usr/bin/php artisan view:cache
+            
+            # 6. Cache GraphQL Schema (Penting untuk performa Lighthouse)
+            /opt/alt/php82/usr/bin/php artisan lighthouse:cache
+            
+            # 7. Restart Queue Worker (Jika pakai Supervisor)
+            # sudo supervisorctl restart laravel-worker:*
+            
+            echo "Deployment Finished Successfully!"
