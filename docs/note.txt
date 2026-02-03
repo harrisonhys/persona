@@ -1,0 +1,5 @@
+/opt/alt/php82/usr/bin/php /usr/local/bin/composer2 update
+lokasi php dan composer
+
+/home/u848041896/domains/bro.my.id/public_html/graphql-srv
+direktori

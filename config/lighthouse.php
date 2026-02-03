@@ -38,6 +38,9 @@ return [
             // middleware, this delegates auth and permission checks to the field level.
             Nuwave\Lighthouse\Http\Middleware\AttemptAuthentication::class,
 
+            // Track token usage
+            \App\Http\Middleware\TrackTokenUsage::class,
+
             // Logs every incoming GraphQL query.
             // Nuwave\Lighthouse\Http\Middleware\LogGraphQLQueries::class,
         ],
