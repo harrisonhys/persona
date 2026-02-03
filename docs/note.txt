@@ -3,3 +3,5 @@ lokasi php dan composer
 
 /home/u848041896/domains/bro.my.id/public_html/graphql-srv
 direktori
+
+/opt/alt/php82/usr/bin/php artisan token:manage generate

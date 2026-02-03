@@ -1,5 +1,5 @@
-# @baseUrl = https://api.bro.my.id/graphql
-@baseUrl = http://localhost:8000/graphql
+@baseUrl = https://api.bro.my.id/graphql
+# @baseUrl = http://localhost:8000/graphql
 @authToken = 2|ToS21pYdGhFut9s53xXPMeGACgkPjbyKEZ8Sb0RMfb5d0483
 
 ### 1. Introspection (Check if API is reachable)
