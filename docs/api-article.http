@@ -1,0 +1,268 @@
+### Article API Examples
+
+@baseUrl = http://localhost:8000/graphql
+@authToken = 2|ToS21pYdGhFut9s53xXPMeGACgkPjbyKEZ8Sb0RMfb5d0483
+
+### 1. Create Article (Draft)
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "mutation CreateArticle($input: CreateArticleInput!) { createArticle(input: $input) { id slug title content category label is_reviewed published_at created_by updated_by created_at } }",
+  "variables": {
+    "input": {
+      "title": "Introduction to GraphQL",
+      "content": "GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data. GraphQL provides a complete and understandable description of the data in your API.",
+      "category": "Technology, API, GraphQL",
+      "label": "Featured, Beginner"
+    }
+  }
+}
+
+### 2. Create Article with Custom Slug
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "mutation CreateArticle($input: CreateArticleInput!) { createArticle(input: $input) { id slug title content category label is_reviewed created_by } }",
+  "variables": {
+    "input": {
+      "slug": "laravel-best-practices-2026",
+      "title": "Laravel Best Practices 2026",
+      "content": "Learn the best practices for Laravel development in 2026. This comprehensive guide covers everything from project structure to deployment strategies.",
+      "content_rewrite": "Discover modern Laravel development patterns and techniques that will make your applications more maintainable and scalable.",
+      "category": "Laravel, PHP, Backend",
+      "label": "Advanced, Tutorial"
+    }
+  }
+}
+
+### 3. List All Articles
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "query { articles { id slug title category label is_reviewed published_at created_by created_at } }"
+}
+
+### 4. List Articles with Filters (Category)
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "query Articles($filters: ArticleFilters) { articles(filters: $filters) { id slug title category label is_reviewed published_at } }",
+  "variables": {
+    "filters": {
+      "category": "Technology"
+    }
+  }
+}
+
+### 5. List Articles with Filters (Status = DRAFT)
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "query Articles($filters: ArticleFilters) { articles(filters: $filters) { id slug title is_reviewed published_at created_by } }",
+  "variables": {
+    "filters": {
+      "status": "DRAFT"
+    }
+  }
+}
+
+### 6. Search Articles by Keyword
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "query Articles($filters: ArticleFilters) { articles(filters: $filters) { id slug title content category label } }",
+  "variables": {
+    "filters": {
+      "search": "GraphQL"
+    }
+  }
+}
+
+### 7. Get Single Article by ID
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "query { article(id: 1) { id slug title content content_rewrite category label category_list label_list is_reviewed published_at created_by updated_by edited_by published_by created_at updated_at } }"
+}
+
+### 8. Get Single Article by Slug
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "query { article(slug: \"introduction-to-graphql\") { id slug title content category label is_reviewed published_at created_by } }"
+}
+
+### 9. Update Article
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "mutation UpdateArticle($id: ID!, $input: UpdateArticleInput!) { updateArticle(id: $id, input: $input) { id slug title content category label updated_by edited_by updated_at } }",
+  "variables": {
+    "id": "1",
+    "input": {
+      "title": "Introduction to GraphQL - Updated",
+      "content": "GraphQL is a powerful query language for APIs. This updated guide covers the latest features and best practices.",
+      "category": "Technology, API, GraphQL, Tutorial",
+      "label": "Featured, Beginner, Updated"
+    }
+  }
+}
+
+### 10. Review Article (Approve)
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "mutation ReviewArticle($id: ID!, $approved: Boolean!) { reviewArticle(id: $id, approved: $approved) { id title is_reviewed updated_by updated_at } }",
+  "variables": {
+    "id": "1",
+    "approved": true
+  }
+}
+
+### 11. Publish Article (Requires Review First)
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "mutation PublishArticle($id: ID!) { publishArticle(id: $id) { id title is_reviewed published_at published_by updated_by } }",
+  "variables": {
+    "id": "1"
+  }
+}
+
+### 12. List Published Articles Only
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "query Articles($filters: ArticleFilters) { articles(filters: $filters) { id slug title published_at published_by category label } }",
+  "variables": {
+    "filters": {
+      "status": "PUBLISHED"
+    }
+  }
+}
+
+### 13. Unpublish Article
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "mutation UnpublishArticle($id: ID!) { unpublishArticle(id: $id) { id title published_at published_by updated_by } }",
+  "variables": {
+    "id": "1"
+  }
+}
+
+### 14. Delete Article (Soft Delete)
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "mutation DeleteArticle($id: ID!) { deleteArticle(id: $id) }",
+  "variables": {
+    "id": "2"
+  }
+}
+
+### 15. Restore Deleted Article
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "mutation RestoreArticle($id: ID!) { restoreArticle(id: $id) { id title deleted_at deleted_by updated_by } }",
+  "variables": {
+    "id": "2"
+  }
+}
+
+### 16. List Articles with Pagination
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "query Articles($first: Int, $page: Int) { articles(first: $first, page: $page) { id slug title created_at } }",
+  "variables": {
+    "first": 5,
+    "page": 1
+  }
+}
+
+### 17. Filter by Label
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "query Articles($filters: ArticleFilters) { articles(filters: $filters) { id title label label_list } }",
+  "variables": {
+    "filters": {
+      "label": "Featured"
+    }
+  }
+}
+
+### 18. Filter Reviewed Articles
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "query Articles($filters: ArticleFilters) { articles(filters: $filters) { id title is_reviewed created_by updated_by } }",
+  "variables": {
+    "filters": {
+      "is_reviewed": true
+    }
+  }
+}
+
+### 19. Complex Filter (Category + Status + Search)
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "query Articles($filters: ArticleFilters) { articles(filters: $filters) { id slug title category label is_reviewed published_at } }",
+  "variables": {
+    "filters": {
+      "category": "Technology",
+      "status": "PUBLISHED",
+      "search": "GraphQL"
+    }
+  }
+}
+
+### 20. Get Article with All Audit Trail
+POST {{baseUrl}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "query": "query { article(id: 1) { id title created_by updated_by edited_by published_by deleted_by created_at updated_at published_at deleted_at } }"
+}
